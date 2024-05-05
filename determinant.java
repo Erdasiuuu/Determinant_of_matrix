@@ -59,7 +59,7 @@ public class Main {
      * | 4 5 6 |
      * | 9 0 0 |
      */
-
+    
 	public static void main(String[] args) {
 		int choice = 0;
 		Matrix matrix = new Matrix();
@@ -119,6 +119,10 @@ public class Main {
     	private double det = 1;
     	private Scanner scanner = new Scanner(System.in);
     
+        /**
+         * @brief Начало заполнения матрицы 
+         * 
+         */
         public void fillMatrix(Scanner scanner) {
             printInputMenu();
             int choice = 0;
@@ -135,7 +139,6 @@ public class Main {
                     case 1:
                     printWarningLen();
                     fillMatrixManual();
-                    size = 7;
                     matrixOut();
                     break;
                     case 2:
@@ -156,22 +159,18 @@ public class Main {
     		for (int i = 0; i < size; i++) {
     			String line = scanner.nextLine();
     			String[] splitLine = line.split("\\s+");
-    			if (i == 0) {
+    			if (i == 0 && splitLine.length <= size) {
     			    size = splitLine.length;
     			}
-    			fillMatrixLine(i, splitLine);
+    			for (int j = 0; j < splitLine.length && j < size; j++) {
+	                matrix[i][j] = Double.parseDouble(splitLine[j]);
+	            }
     		}
-    	}
-    	
-    	public void fillMatrixLine(int index, String line[]) {
-	        for (int i = 0; i < line.length && i < size; i++) {
-	            matrix[index][i] = Double.parseDouble(line[i]);
-	        }
     	}
     	
     	public void fillMatrixRandom() {
     	    Random random = new Random();
-    	    size++;
+    	    size = 0;
     	    while (size <= 0 || size > 100) {
     	        System.out.printf("Введите размер матрицы\n"); 
     	        size = scanner.nextInt();
@@ -180,8 +179,8 @@ public class Main {
     	            System.out.printf("Число x не удовлетворяет одному из условий\nx > 0 и x <= 100\n\n");   
     	        }
     	    }
-    	    for (int i = 0; i < size; ++i) {
-    	        for (int j = 0; j < size; ++j) {
+    	    for (int i = 0; i < size; i++) {
+    	        for (int j = 0; j < size; j++) {
     	            matrix[i][j] = (double)(random.nextInt()) % 150;
     	        }
     	    }
@@ -240,7 +239,7 @@ public class Main {
     	public void upBiggerValue(int index) {
     	    int max_index = index;
     	    double max = Math.abs(matrix[index][index]);
-    	    for (int i = index + 1; i < size; i++) {
+    	    for (int i = index + 1; i < size; i+) {
     	        if (Math.abs(matrix[i][index]) > max) {
     	            max_index = i;
     	            max = Math.abs(matrix[i][index]);
@@ -339,22 +338,11 @@ public class Main {
             if (value < 0) {
                 len++;
             }
-            value = trunc(value);
             while (Math.abs(value) >= 1) {
                 value /= 10;
                 len++;
             }
             return len;
-        }
-        
-        public double trunc(double value) {
-            if (value > 0) {
-                value = Math.floor(value);
-            }
-            else {
-                value = Math.ceil(value);
-            }
-            return value;
         }
     }
 }
