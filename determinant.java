@@ -25,7 +25,7 @@ public class Main {
             scanner.nextLine();
     		switch (choice) {
     			case INPUT:
-    				matrix = fillMatrix(matrix, scanner);
+    				matrix.fillMatrix(scanner);
     				break;
     			case CALC:
     			    matrix.calculateMatrix();
@@ -42,39 +42,6 @@ public class Main {
 		}
 	}
 	
-	public static Matrix fillMatrix(Matrix matrix, Scanner scanner) {
-        printInputMenu();
-        int choice = 0;
-        matrix.size = MAX_SIZE;
-        matrix.matrixExist = true;
-        for (int i = 0; i < matrix.size; i++) {
-            for (int j = 0; j < matrix.size; j++) {
-                matrix.matrix[i][j] = 0;
-            }
-        }
-        do {
-            choice = scanner.nextInt();
-            scanner.nextLine();
-            switch (choice) {
-                case 1:
-                printWarningLen();
-                matrix.fillMatrixManual();
-                break;
-                case 2:
-                printWarningLen();
-                matrix.fillMatrixRandom();
-                break;
-                default:
-                printErrorInput();
-                printInputMenu();
-                break;
-            }
-        } while(choice != 1 && choice != 2);
-        matrix.inputRowCol(scanner);
-        matrix.matrixCalculate = false;
-        return matrix;
-    }
-    
 	public static void printMenu() {
         System.out.printf("Введите один из вариантов меню.\n");
         System.out.printf("1. Ввод данных (вручную/случайно). \n");
@@ -107,6 +74,39 @@ public class Main {
     	private double det = 1;
     	private Scanner scanner = new Scanner(System.in);
     
+        public void fillMatrix(Scanner scanner) {
+            printInputMenu();
+            int choice = 0;
+            matrixExist = true;
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    matrix[i][j] = 0;
+                }
+            }
+            do {
+                choice = scanner.nextInt();
+                scanner.nextLine();
+                switch (choice) {
+                    case 1:
+                    printWarningLen();
+                    fillMatrixManual();
+                    size = 7;
+                    matrixOut();
+                    break;
+                    case 2:
+                    printWarningLen();
+                    fillMatrixRandom();
+                    break;
+                    default:
+                    printErrorInput();
+                    printInputMenu();
+                    break;
+                }
+            } while(choice != 1 && choice != 2);
+            inputRowCol(scanner);
+            matrixCalculate = false;
+        }
+        
     	public void fillMatrixManual() {
     		for (int i = 0; i < size; i++) {
     			String line = scanner.nextLine();
@@ -114,8 +114,14 @@ public class Main {
     			if (i == 0) {
     			    size = splitLine.length;
     			}
-    			matrix[i] = Arrays.stream(splitLine).mapToDouble(Double::parseDouble).toArray();
+    			fillMatrixLine(i, splitLine);
     		}
+    	}
+    	
+    	public void fillMatrixLine(int index, String line[]) {
+	        for (int i = 0; i < line.length && i < size; i++) {
+	            matrix[index][i] = Double.parseDouble(line[i]);
+	        }
     	}
     	
     	public void fillMatrixRandom() {
