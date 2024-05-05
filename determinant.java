@@ -13,8 +13,8 @@ public class Main {
     private static final int CALC = 2;
     private static final int OUTPUT = 3;
     private static final int EXIT = 4;
-    private static final int MAX_SIZE = 5;
-    private static final double EPS = 1e-6;
+    private static final int MAX_SIZE = 100;
+    private static final double EPS = 1e-10;
     
     private static final int COLUMN = 1;
     private static final int ROW = 2;
@@ -87,7 +87,7 @@ public class Main {
 		}
 	}
 	
-	public static void printMenu() {
+	private static void printMenu() {
         System.out.printf("Введите один из вариантов меню.\n");
         System.out.printf("1. Ввод данных (вручную/случайно). \n");
         System.out.printf("2. Вычислить матрицу и найти опеределитель\n");
@@ -95,17 +95,17 @@ public class Main {
         System.out.printf("4. Завершение программы\n");
 	}
 	
-	public static void printInputMenu() {
+	private static void printInputMenu() {
         System.out.printf("\nВведите один из вариантов меню.\n");
         System.out.printf("1. Вручную.\n");
         System.out.printf("2. Случайно.\n");
     }
 	
-    public static void printErrorInput() {
+    private static void printErrorInput() {
             System.out.printf("\nНеверный ввод. Попробуйте еще раз\n");
     }
     
-    public static void printWarningLen() {
+    private static void printWarningLen() {
         System.out.printf("\nРазмер матрицы не может быть более 100х100\n");
     }
     
@@ -120,8 +120,11 @@ public class Main {
     	private Scanner scanner = new Scanner(System.in);
     
         /**
-         * @brief Начало заполнения матрицы 
+         * @brief Начало заполнения матрицы
          * 
+         * Предыдущие введенные данные обнуляются и предлагаются варианты
+         * заполнения матрицы(вручную/случайно), далее запрашивается
+         * столбец и строка для их последующего удаления
          */
         public void fillMatrix(Scanner scanner) {
             printInputMenu();
@@ -155,6 +158,13 @@ public class Main {
             matrixCalculate = false;
         }
         
+        
+        /**
+         * @brief Ручное заполнения матрицы
+         * 
+         * Считываются строки, каждая разбивается по элементам(разделителем 
+         * является пробел) и заполняет матрицу.
+         */
     	public void fillMatrixManual() {
     		for (int i = 0; i < size; i++) {
     			String line = scanner.nextLine();
@@ -163,10 +173,15 @@ public class Main {
     			    size = splitLine.length;
     			}
     			for (int j = 0; j < splitLine.length && j < size; j++) {
-	                matrix[i][j] = Double.parseDouble(splitLine[j]);
+                    matrix[i][j] = Double.parseDouble(splitLine[j]);   
 	            }
     		}
     	}
+    	
+        /**
+         * @brief Заполнение матрицы случайными числами
+         * 
+         */
     	
     	public void fillMatrixRandom() {
     	    Random random = new Random();
@@ -179,8 +194,8 @@ public class Main {
     	            System.out.printf("Число x не удовлетворяет одному из условий\nx > 0 и x <= 100\n\n");   
     	        }
     	    }
-    	    for (int i = 0; i < size; i++) {
-    	        for (int j = 0; j < size; j++) {
+    	    for (int i = 0; i < size; ++i) {
+    	        for (int j = 0; j < size; ++j) {
     	            matrix[i][j] = (double)(random.nextInt()) % 150;
     	        }
     	    }
@@ -188,9 +203,15 @@ public class Main {
     	    matrixOut();
     	}
     	
+        /**
+         * @brief Начало вычислений над матрицой
+         * 
+         */
+    	
     	public void calculateMatrix() {
-    	    if (matrixExist == true) {
+    	    if (matrixExist == true && matrixCalculate == false) {
     	        matrixCalculate = true;
+    	        det = 1;
     	        double[][] copy = new double[size][size];
     	        for (int i = 0; i < size; i++) {
     	            copy[i] = matrix[i].clone();
@@ -200,12 +221,22 @@ public class Main {
     	            matrix[i] = copy[i].clone();
     	        }
     	        getSmallMatrix();
-    	        System.out.printf("\nВычисления завершены\n");
     	    }
     	    else {
     	        System.out.printf("\nНе введена матрица\n");
     	    }
+    	    if (matrixExist == true) {
+    	        System.out.printf("\nВычисления завершены\n");
+    	    }
     	}
+    	
+        /**
+         * @brief Получение меньшей матрицы
+         * 
+         * Т.к матрица будет на 1 порядок меньше, то необходимо уменьшить размер.
+         * Номер строки и стоолбца нужно уменьшить, т.к индексация массивов идет
+         * с 0.
+         */
     	
     	public void getSmallMatrix() {
     	   int row_correct = 0;
@@ -226,8 +257,17 @@ public class Main {
             }
     	}
     	
+        /**
+         * @brief вычисления опеределителя
+         * 
+         * Проходимся по каждому столбцу и подымаем наверх самое большое абсолютное
+         * число. Нужно привести матрицу к треугольному виду, чтобы можно было
+         * вычислить определитель с помощью перемножения всех элементов главной
+         * диагонали.
+         */
+    	
     	public void findDet() {
-    	    for (int i = 0; i < size && det != 0; i++) {
+    	    for (int i = 0; i < size && Math.abs(det) >= EPS; i++) {
     	        upBiggerValue(i);
     	        if (Math.abs(matrix[i][i]) >= EPS) {
     	            diffRows(i);
@@ -236,10 +276,16 @@ public class Main {
     	    }
     	}
     	
+        /**
+         * @brief Меняем самую верхнюю строку со строкой, в столбце которого
+         * находится максимальный элемент.
+         * 
+         */
+    	
     	public void upBiggerValue(int index) {
     	    int max_index = index;
     	    double max = Math.abs(matrix[index][index]);
-    	    for (int i = index + 1; i < size; i+) {
+    	    for (int i = index + 1; i < size; i++) {
     	        if (Math.abs(matrix[i][index]) > max) {
     	            max_index = i;
     	            max = Math.abs(matrix[i][index]);
@@ -257,7 +303,7 @@ public class Main {
     	    for (int i = index + 1; i < size; i++) {
     	        double div = matrix[i][index] / matrix[index][index];
                 for (int j = index; j < size; j++) {
-                        matrix[i][j] -= div * matrix[index][j];
+                        matrix[i][j]-= div * matrix[index][j];
                 }
     	    }
     	}
@@ -306,6 +352,11 @@ public class Main {
             }
     	}
     
+        /**
+         * @brief Вывод матрицы на экран
+         * 
+         */
+    
         public void matrixOut() {
             int maxLen = findMaxLen() + 3;
             for (int i = 0; i < size; ++i) {
@@ -320,6 +371,11 @@ public class Main {
     		}
         }
         
+        /**
+         * @brief Поиск максимально длинного элемента
+         * 
+         */
+        
         public int findMaxLen() {
             int maxLen = elemLen(matrix[0][0]);
             for (int i = 0; i < size; i++) {
@@ -332,6 +388,11 @@ public class Main {
             }
             return maxLen;
         }
+        
+        /**
+         * @brief Вычисляется длина элемента.
+         * 
+         */
         
         public int elemLen(double value) {
             int len = Math.abs(value) < 1 ? 1 : 0;
