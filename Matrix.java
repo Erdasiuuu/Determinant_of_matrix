@@ -1,11 +1,15 @@
-public static class Matrix {
+import java.util.Random;
+import java.util.Scanner;
+
+public class Matrix {
   private boolean matrixExist;
   private boolean matrixCalculate;
-  private int size = MAX_SIZE;
+  private int size = Constants.MAX_SIZE.getValue();
   private double[][] matrix = new double[size][size];
   private int row;
   private int col;
   private double det = 1;
+  private final double EPS = 1e-8;
   private Scanner scanner = new Scanner(System.in);
 
   /**
@@ -16,7 +20,7 @@ public static class Matrix {
    * столбец и строка для их последующего удаления
    */
   public void fillMatrix(Scanner scanner) {
-    printInputMenu();
+    Main.printInputMenu();
     int choice = 0;
     matrixExist = true;
     for (int i = 0; i < size; i++) {
@@ -29,17 +33,16 @@ public static class Matrix {
       scanner.nextLine();
       switch (choice) {
         case 1:
-          printWarningLen();
+          Main.printWarningLen();
           fillMatrixManual();
-          matrixOut();
           break;
         case 2:
-          printWarningLen();
+          Main.printWarningLen();
           fillMatrixRandom();
           break;
         default:
-          printErrorInput();
-          printInputMenu();
+          Main.printErrorInput();
+          Main.printInputMenu();
           break;
       }
     } while (choice != 1 && choice != 2);
@@ -74,11 +77,11 @@ public static class Matrix {
   public void fillMatrixRandom() {
     Random random = new Random();
     size = 0;
-    while (size <= 0 || size > 100) {
+    while (size <= 0 || size > Constants.MAX_SIZE.getValue()) {
       System.out.printf("Введите размер матрицы\n");
       size = scanner.nextInt();
       scanner.nextLine();
-      if (size <= 0 || size > 100) {
+      if (size <= 0 || size > Constants.MAX_SIZE.getValue()) {
         System.out.printf("Число x не удовлетворяет одному из условий\nx > 0 и x <= 100\n\n");
       }
     }
@@ -197,7 +200,7 @@ public static class Matrix {
 
   public void inputRowCol(Scanner scanner) {
     int value = 0;
-    for (int i = COLUMN; i <= ROW; i++) {
+    for (int i = Constants.COLUMN.getValue(); i <= Constants.ROW.getValue(); i++) {
       while (checkValidRowCol(value) == false) {
         printInputRowColMenu(i);
         value = scanner.nextInt();
@@ -207,9 +210,9 @@ public static class Matrix {
               "Число x не удовлетворяет одному из условий\nx > 0 и x <= размер матрицы\n\n");
         }
       }
-      if (i == COLUMN) {
+      if (i == Constants.COLUMN.getValue()) {
         col = value;
-      } else if (i == ROW) {
+      } else if (i == Constants.ROW.getValue()) {
         row = value;
       }
       value = 0;
@@ -221,9 +224,9 @@ public static class Matrix {
   }
 
   public void printInputRowColMenu(int index) {
-    if (index == COLUMN) {
+    if (index == Constants.COLUMN.getValue()) {
       System.out.printf("Введите номер столбца\n");
-    } else if (index == ROW) {
+    } else if (index == Constants.ROW.getValue()) {
       System.out.printf("Введите номер строки\n");
     }
   }
@@ -232,8 +235,9 @@ public static class Matrix {
     if (matrixCalculate == false) {
       System.out.printf("\nНе проведены вычисления\n");
     } else {
+      System.out.printf("\nРезультат\n\n", det);
       matrixOut();
-      System.out.printf("Определитель исходной матрицы равен %f\n", det);
+      System.out.printf("Определитель исходной матрицы равен %f\n\n", det);
     }
   }
 

@@ -1,4 +1,3 @@
-import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -84,7 +83,7 @@ public class Main {
     }
   }
 
-  private static void printMenu() {
+  public static void printMenu() {
     System.out.printf("Введите один из вариантов меню.\n");
     System.out.printf("1. Ввод данных (вручную/случайно). \n");
     System.out.printf("2. Вычислить матрицу и найти опеределитель\n");
@@ -92,17 +91,17 @@ public class Main {
     System.out.printf("4. Завершение программы\n");
   }
 
-  private static void printInputMenu() {
+  public static void printInputMenu() {
     System.out.printf("\nВведите один из вариантов меню.\n");
     System.out.printf("1. Вручную.\n");
     System.out.printf("2. Случайно.\n");
   }
 
-  private static void printErrorInput() {
+  public static void printErrorInput() {
     System.out.printf("\nНеверный ввод. Попробуйте еще раз\n");
   }
 
-  private static void printWarningLen() {
+  public static void printWarningLen() {
     System.out.printf("\nРазмер матрицы не может быть более 100х100\n");
   }
 }
