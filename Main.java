@@ -2,6 +2,20 @@ import java.util.Scanner;
 
 public class Main {
   /**
+   * @brief Константные переменные для дальнейшего использования
+   *
+   */
+  private static final int INPUT = 1;
+  private static final int CALC = 2;
+  private static final int OUTPUT = 3;
+  private static final int EXIT = 4;
+  private static final int MAX_SIZE = 100;
+  private static final double EPS = 1e-10;
+
+  private static final int COLUMN = 1;
+  private static final int ROW = 2;
+
+  /**
    * @brief Программа для подсчета определителя
    *
    * Программа в виде простого меню, которое имеет 4 опции
@@ -46,21 +60,21 @@ public class Main {
     int choice = 0;
     Matrix matrix = new Matrix();
     Scanner scanner = new Scanner(System.in);
-    while (choice != Constants.EXIT.getValue()) {
+    while (choice != EXIT) {
       printMenu();
       choice = scanner.nextInt();
       scanner.nextLine();
       switch (choice) {
-        case Constants.INPUT.getValue():
+        case INPUT:
           matrix.fillMatrix(scanner);
           break;
-        case Constants.CALC.getValue():
+        case CALC:
           matrix.calculateMatrix();
           break;
-        case Constants.OUTPUT.getValue():
+        case OUTPUT:
           matrix.printMatrix();
           break;
-        case Constants.EXIT.getValue():
+        case EXIT:
           break;
         default:
           printErrorInput();
